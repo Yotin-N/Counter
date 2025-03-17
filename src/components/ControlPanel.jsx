@@ -3,7 +3,8 @@ import React, { useState } from "react";
 const ControlPanel = ({
   visible,
   onAddSet,
-  onReset,
+  onResetAll,
+  onResetCurrent,
   countdownSets,
   isCountingDown,
   setIsCountingDown,
@@ -11,6 +12,7 @@ const ControlPanel = ({
   onEditSet,
   onRemoveSet,
   currentSetIndex,
+  onSelectSet,
 }) => {
   const [newSetValue, setNewSetValue] = useState("");
   const [editingIndex, setEditingIndex] = useState(null);
@@ -45,6 +47,12 @@ const ControlPanel = ({
     setEditingIndex(null);
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleAddSet();
+    }
+  };
+
   return (
     <div
       className={`control-panel ${visible ? "visible" : "hidden"}`}
@@ -58,6 +66,7 @@ const ControlPanel = ({
             min="1"
             value={newSetValue}
             onChange={(e) => setNewSetValue(e.target.value)}
+            onKeyPress={handleKeyPress}
             placeholder="Starting value"
           />
           <button onClick={handleAddSet}>Add</button>
@@ -74,6 +83,7 @@ const ControlPanel = ({
               <li
                 key={index}
                 className={index === currentSetIndex ? "current-set" : ""}
+                onClick={() => onSelectSet(index)}
               >
                 {editingIndex === index ? (
                   <div className="edit-set-form">
@@ -99,18 +109,24 @@ const ControlPanel = ({
                 ) : (
                   <div className="set-item">
                     <span className="set-number">
-                      Set {index + 1}: {set.currentValue}
+                      Set {index + 1}: {set.currentValue} / {set.startValue}
                     </span>
                     <div className="set-actions">
                       <button
-                        onClick={() => startEditingSet(index, set.startValue)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          startEditingSet(index, set.startValue);
+                        }}
                         className="icon-btn edit-btn"
                         title="Edit set"
                       >
                         ✎
                       </button>
                       <button
-                        onClick={() => onRemoveSet(index)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onRemoveSet(index);
+                        }}
                         className="icon-btn delete-btn"
                         title="Remove set"
                       >
@@ -129,10 +145,11 @@ const ControlPanel = ({
         <div className="button-group">
           {countdownSets.length > 0 && (
             <button onClick={handleStartStop} className="primary-btn">
-              {isCountingDown ? "Pause" : "Start/Resume"}
+              {isCountingDown ? "Pause" : "Start"}
             </button>
           )}
-          <button onClick={onReset}>Reset All</button>
+          <button onClick={onResetCurrent}>Reset Set</button>
+          <button onClick={onResetAll}>Reset All</button>
         </div>
       </div>
 
@@ -140,14 +157,15 @@ const ControlPanel = ({
         <h3>Instructions</h3>
         <ul>
           <li>
-            Press <kbd>Enter</kbd> to decrease number
+            Press <kbd>Enter</kbd> or <kbd>Space</kbd> to decrease number
           </li>
           <li>
             Press <kbd>Esc</kbd> to toggle controls
           </li>
           <li>
-            Press <kbd>Ctrl+R</kbd> to reset
+            Press <kbd>Ctrl+R</kbd> to reset current set
           </li>
+          <li>Click on a set to select it</li>
         </ul>
       </div>
     </div>
