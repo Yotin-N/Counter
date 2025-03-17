@@ -1,4 +1,6 @@
-/* src/App.css */
+.mode-option:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}/* src/App.css - Enhanced with new UI features */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -19,6 +21,7 @@ body {
   height: 100vh;
   width: 100vw;
   position: relative;
+  user-select: none; /* Prevent text selection */
 }
 
 .display-container {
@@ -27,7 +30,7 @@ body {
   align-items: center;
   height: 100%;
   width: 100%;
-  cursor: pointer; /* Hide cursor on the display area */
+  cursor: pointer; /* Show pointer on the display area */
 }
 
 /* Countdown Display */
@@ -58,21 +61,21 @@ body {
   transform: translate(-50%, -50%);
 }
 
-/* Dynamic font sizing based on digit count */
+/* Dynamic font sizing based on digit count - increased sizes */
 .current-number.single-digit {
-  font-size: min(90vh, 70vw);
+  font-size: min(120vh, 90vw);
 }
 
 .current-number.double-digit {
-  font-size: min(80vh, 60vw);
+  font-size: min(100vh, 80vw);
 }
 
 .current-number.triple-digit {
-  font-size: min(70vh, 50vw);
+  font-size: min(90vh, 70vw);
 }
 
 .current-number.multi-digit {
-  font-size: min(60vh, 40vw);
+  font-size: min(80vh, 60vw);
 }
 
 .start-hint {
@@ -93,20 +96,56 @@ body {
   100% { opacity: 0.5; }
 }
 
+/* Control Panel Edge Indicator */
+.control-panel-indicator {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 15px;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.control-panel-indicator.visible {
+  animation: glow 2s infinite alternate;
+  opacity: 1;
+}
+
+.control-panel-indicator.hidden {
+  opacity: 0;
+}
+
+@keyframes glow {
+  from {
+    opacity: 0.05;
+    /* Removed box-shadow */
+  }
+  to {
+    opacity: 0.15;
+    /* Removed box-shadow */
+  }
+}
+
 /* Control Panel */
 .control-panel {
-  position: absolute;
+  position: fixed;
   top: 0;
   font-family: 'Inter', 'Helvetica Neue', sans-serif;
   right: 0;
   width: 340px;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.7); /* Very transparent background */
-  backdrop-filter: blur(150px); /* Strong blur for readability while maintaining transparency */
+  background-color: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(15px);
   padding: 25px;
+  overflow-y: auto;
   overflow-x: hidden;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 100;
+  user-select: none; /* Prevent text selection */
 }
 
 .control-panel.visible {
@@ -146,6 +185,7 @@ body {
   color: #fff;
   font-size: 1rem;
   transition: all 0.2s ease;
+  user-select: auto; /* Allow text selection only for input fields */
 }
 
 .input-group input:focus {
@@ -156,7 +196,7 @@ body {
 
 button {
   padding: 12px 18px;
-  background-color: #2196F3;
+  background-color: #0a47f0;
   color: white;
   border: none;
   border-radius: 8px;
@@ -205,10 +245,45 @@ button:hover {
   border-left: 3px solid #2196F3;
 }
 
+/* Enhanced Set Item with Icon */
 .set-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.set-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  margin-right: 10px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.set-details {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.set-values {
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.set-name {
+  font-weight: 500;
+}
+
+.set-progress {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
 }
 
 .set-actions {
@@ -256,6 +331,7 @@ button:hover {
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
   color: white;
+  user-select: auto; /* Allow text selection for edit inputs */
 }
 
 .edit-buttons {
@@ -282,7 +358,7 @@ button:hover {
 }
 
 .primary-btn {
-  background-color: #2196F3;
+  background-color: #0a47f0;
   min-width: 120px;
 }
 
@@ -306,6 +382,86 @@ kbd {
   line-height: 1;
   padding: 2px 5px;
   margin: 0 2px;
+}
+
+/* Countdown Mode Selection */
+.mode-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mode-selection {
+  display: flex;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.mode-option {
+  flex: 1;
+  padding: 8px 10px;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.8rem;
+}
+
+.mode-option.selected {
+  background-color: rgba(33, 150, 243, 0.2);
+  border: 1px solid rgba(33, 150, 243, 0.5);
+}
+
+.mode-description {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 8px;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Footer */
+.footer {
+  position: fixed;
+  bottom: 15px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 0.7rem;
+  opacity: 0.4;
+  padding: 10px;
+  z-index: 5;
+  transition: opacity 0.3s ease;
+}
+
+/* Footer inside control panel */
+.control-panel .footer {
+  position: relative;
+  bottom: auto;
+  margin-top: 20px;
+  padding: 0;
+  font-size: 0.65rem;
+}
+
+.footer-copyright {
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+.footer-name {
+  font-size: 0.65rem;
+  margin-top: 4px;
+  opacity: 0.7;
+}
+
+/* Footer visibility states */
+.footer.visible {
+  opacity: 0.4;
+}
+
+.footer.counting {
+  opacity: 0.15;
 }
 
 /* Mobile Responsiveness */

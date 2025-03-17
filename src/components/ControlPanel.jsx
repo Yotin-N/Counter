@@ -1,4 +1,6 @@
+// src/components/ControlPanel.jsx
 import React, { useState } from "react";
+import Footer from "./Footer";
 
 const ControlPanel = ({
   visible,
@@ -8,11 +10,13 @@ const ControlPanel = ({
   countdownSets,
   isCountingDown,
   setIsCountingDown,
-  onMouseLeave,
+  // onMouseLeave,
   onEditSet,
   onRemoveSet,
   currentSetIndex,
   onSelectSet,
+  countdownMode,
+  setCountdownMode,
 }) => {
   const [newSetValue, setNewSetValue] = useState("");
   const [editingIndex, setEditingIndex] = useState(null);
@@ -54,10 +58,7 @@ const ControlPanel = ({
   };
 
   return (
-    <div
-      className={`control-panel ${visible ? "visible" : "hidden"}`}
-      onMouseLeave={onMouseLeave}
-    >
+    <div className={`control-panel ${visible ? "visible" : "hidden"}`}>
       <div className="control-section">
         <h3>Add Countdown Set</h3>
         <div className="input-group">
@@ -108,9 +109,15 @@ const ControlPanel = ({
                   </div>
                 ) : (
                   <div className="set-item">
-                    <span className="set-number">
-                      Set {index + 1}: {set.currentValue} / {set.startValue}
-                    </span>
+                    <div className="set-details">
+                      <div className="set-icon">{index + 1}</div>
+                      <div className="set-values">
+                        <div className="set-name">Set {index + 1}</div>
+                        <div className="set-progress">
+                          {set.currentValue} / {set.startValue}
+                        </div>
+                      </div>
+                    </div>
                     <div className="set-actions">
                       <button
                         onClick={(e) => {
@@ -141,6 +148,29 @@ const ControlPanel = ({
         )}
       </div>
 
+      {/* New countdown mode selection */}
+      <div className="control-section mode-section">
+        <h3>Count Mode</h3>
+        <div className="mode-selection">
+          <div
+            className={`mode-option ${
+              countdownMode === "single" ? "selected" : ""
+            }`}
+            onClick={() => setCountdownMode("single")}
+          >
+            Single Press
+          </div>
+          <div
+            className={`mode-option ${
+              countdownMode === "hold" ? "selected" : ""
+            }`}
+            onClick={() => setCountdownMode("hold")}
+          >
+            Hold Mode
+          </div>
+        </div>
+      </div>
+
       <div className="control-section">
         <div className="button-group">
           {countdownSets.length > 0 && (
@@ -165,9 +195,12 @@ const ControlPanel = ({
           <li>
             Press <kbd>Ctrl+R</kbd> to reset current set
           </li>
-          <li>Click on a set to select it</li>
+          <li>Click on the display area to decrease when counting</li>
+          <li>Move mouse to the right edge to show controls</li>
         </ul>
       </div>
+
+      <Footer isCountingDown={false} />
     </div>
   );
 };
