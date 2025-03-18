@@ -1,4 +1,3 @@
-// src/components/ControlPanel.jsx
 import React, { useState } from "react";
 import Footer from "./Footer";
 import ColorCustomizationMenu from "./ColorCustomizationMenu";
@@ -217,7 +216,6 @@ const ControlPanel = ({
       </div>
 
 
-      {/* Color Customization Menu */}
       <ColorCustomizationMenu
         isCountingDown={isCountingDown}
         fontColor={fontColor}
