@@ -1,16 +1,29 @@
-.mode-option:hover {
-  background-color: rgba(255, 255, 255, 0.12);
-}/* src/App.css - Enhanced with new UI features */
+/* src/App.css - Modified with Gray and Gold Theme */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+:root {
+  /* Gray and Gold Theme Colors */
+  --dark-gray: #2b2b2b;
+  --medium-gray: #3a3a3a;
+  --light-gray: #555555;
+  --lighter-gray: #777777;
+  --gold-primary: #d4af37;
+  --gold-secondary: #ffd700;
+  --gold-accent: #c5b358;
+  --gold-light: #f5e7a3;
+  --gold-dark: #9c8022;
+  --text-light: #f5f5f5;
+  --text-dark: #212121;
+}
+
 body {
   font-family: 'Inter', 'Helvetica Neue', sans-serif;
-  background-color: #0a47f0;
-  color: #fff;
+  background-color: var(--lighter-gray);
+  color: var(--text-light);
   overflow: hidden;
 }
 
@@ -21,7 +34,8 @@ body {
   height: 100vh;
   width: 100vw;
   position: relative;
-  user-select: none; /* Prevent text selection */
+  user-select: none;
+  /* Prevent text selection */
 }
 
 .display-container {
@@ -30,7 +44,8 @@ body {
   align-items: center;
   height: 100%;
   width: 100%;
-  cursor: pointer; /* Show pointer on the display area */
+  cursor: pointer;
+  /* Show pointer on the display area */
 }
 
 /* Countdown Display */
@@ -41,29 +56,44 @@ body {
   align-items: center;
   width: 100%;
   height: 100%;
-  cursor: none; /* Hide the cursor over the number display */
+  cursor: none;
+  /* Hide the cursor over the number display */
+  position: relative;
 }
 
 .current-number {
-  font-size: min(60vh, 40vw); /* Default size for 4+ digit numbers */
-  font-weight: 500; /* Much lighter, more modern weight */
-  color: #fff;
+  font-size: min(60vh, 40vw);
+  /* Default size for 4+ digit numbers */
+  font-weight: 500;
+  /* Much lighter, more modern weight */
+  color: var(--gold-primary);
   text-align: center;
   line-height: 1;
   transition: all 0.3s ease;
-  text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
-  user-select: none; /* Prevent text selection */
-  font-family: 'Inter', 'Roboto', sans-serif;
+  text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+  user-select: none;
+  /* Prevent text selection */
+  font-family: 'Noto Sans Nag Mundari', sans-serif;
   letter-spacing: -0.05em;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
 }
 
 /* Dynamic font sizing based on digit count - increased sizes */
 .current-number.single-digit {
-  font-size: min(120vh, 90vw);
+  font-size: min(100vh, 90vw);
+}
+
+.current-number.single-digit span {
+  margin: 0 auto;
+  display: block;
 }
 
 .current-number.double-digit {
@@ -75,7 +105,7 @@ body {
 }
 
 .current-number.multi-digit {
-  font-size: min(80vh, 60vw);
+  font-size: min(80vh, 40vw);
 }
 
 .start-hint {
@@ -88,12 +118,49 @@ body {
   font-weight: 300;
   letter-spacing: 0.2em;
   text-transform: uppercase;
+  color: var(--gold-light);
+}
+
+/* Add styles for next set hint */
+.next-set-hint {
+  position: absolute;
+  bottom: 40px;
+  font-size: 0.85rem;
+  opacity: 0.4;
+  text-align: center;
+  animation: pulse-highlight 2s infinite;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-light);
 }
 
 @keyframes pulse {
-  0% { opacity: 0.5; }
-  50% { opacity: 1; }
-  100% { opacity: 0.5; }
+  0% {
+    opacity: 0.7;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes pulse-highlight {
+  0% {
+    opacity: 0.7;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.7;
+  }
 }
 
 /* Control Panel Edge Indicator */
@@ -103,7 +170,7 @@ body {
   right: 0;
   width: 15px;
   height: 100%;
-  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 100%);
+  background: linear-gradient(90deg, rgba(212, 175, 55, 0) 0%, rgba(212, 175, 55, 0.15) 100%);
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
@@ -122,11 +189,10 @@ body {
 @keyframes glow {
   from {
     opacity: 0.05;
-    /* Removed box-shadow */
   }
+
   to {
     opacity: 0.15;
-    /* Removed box-shadow */
   }
 }
 
@@ -138,14 +204,16 @@ body {
   right: 0;
   width: 340px;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.85);
+  background-color: rgba(42, 42, 42, 0.92);
   backdrop-filter: blur(15px);
+  border-left: 1px solid var(--gold-dark);
   padding: 25px;
   overflow-y: auto;
   overflow-x: hidden;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 100;
-  user-select: none; /* Prevent text selection */
+  user-select: none;
+  /* Prevent text selection */
 }
 
 .control-panel.visible {
@@ -159,14 +227,14 @@ body {
 .control-section {
   margin-bottom: 30px;
   padding-bottom: 25px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
 }
 
 .control-section h3 {
   margin-bottom: 18px;
   font-size: 0.85rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--gold-primary);
   letter-spacing: 0.5px;
   text-transform: uppercase;
 }
@@ -179,25 +247,31 @@ body {
 .input-group input {
   flex: 1;
   padding: 12px 16px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background-color: var(--medium-gray);
+  border: 1px solid var(--gold-dark);
   border-radius: 8px;
-  color: #fff;
+  color: var(--text-light);
   font-size: 1rem;
   transition: all 0.2s ease;
-  user-select: auto; /* Allow text selection only for input fields */
+  user-select: auto;
+  /* Allow text selection only for input fields */
+}
+
+.input-group input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .input-group input:focus {
   outline: none;
-  border-color: rgba(33, 150, 243, 0.6);
-  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+  border-color: var(--gold-secondary);
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
 }
 
 button {
   padding: 12px 18px;
-  background-color: #0a47f0;
-  color: white;
+  background-color: var(--gold-primary);
+  color: var(--text-dark);
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -209,10 +283,19 @@ button {
   justify-content: center;
 }
 
-button:hover {
-  background-color: #0d8aee;
+button:hover:not(:disabled) {
+  background-color: var(--gold-secondary);
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+button:disabled,
+.disabled-btn {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--light-gray);
+  box-shadow: none;
+  transform: none;
 }
 
 .button-group {
@@ -229,20 +312,25 @@ button:hover {
   padding: 12px 15px;
   margin-bottom: 8px;
   border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: var(--medium-gray);
   transition: all 0.2s ease;
   cursor: pointer;
 }
 
-.sets-list li:hover {
-  background-color: rgba(255, 255, 255, 0.12);
+.sets-list li:hover:not(.counting-set) {
+  background-color: rgba(212, 175, 55, 0.1);
+}
+
+.sets-list li.counting-set {
+  cursor: default;
+  opacity: 0.8;
 }
 
 .current-set {
-  background-color: rgba(33, 150, 243, 0.15) !important;
-  color: #2196F3;
+  background-color: rgba(212, 175, 55, 0.15) !important;
+  color: var(--gold-primary);
   font-weight: 500;
-  border-left: 3px solid #2196F3;
+  border-left: 3px solid var(--gold-primary);
 }
 
 /* Enhanced Set Item with Icon */
@@ -258,7 +346,8 @@ button:hover {
   justify-content: center;
   width: 28px;
   height: 28px;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--gold-dark);
+  color: var(--text-dark);
   border-radius: 50%;
   margin-right: 10px;
   font-weight: 500;
@@ -282,7 +371,7 @@ button:hover {
 }
 
 .set-progress {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--gold-light);
   font-size: 12px;
 }
 
@@ -305,16 +394,16 @@ button:hover {
   transition: all 0.2s ease;
 }
 
-.edit-btn:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #2196F3;
+.edit-btn:hover:not(:disabled) {
+  background-color: rgba(212, 175, 55, 0.1);
+  color: var(--gold-light);
 }
 
 .delete-btn {
   color: #ff5252;
 }
 
-.delete-btn:hover {
+.delete-btn:hover:not(:disabled) {
   background-color: rgba(255, 82, 82, 0.1);
 }
 
@@ -327,11 +416,12 @@ button:hover {
 .edit-set-form input {
   width: 100%;
   padding: 8px 10px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: var(--medium-gray);
+  border: 1px solid var(--gold-dark);
   border-radius: 4px;
-  color: white;
-  user-select: auto; /* Allow text selection for edit inputs */
+  color: var(--text-light);
+  user-select: auto;
+  /* Allow text selection for edit inputs */
 }
 
 .edit-buttons {
@@ -340,25 +430,25 @@ button:hover {
 }
 
 .save-btn {
-  background-color: #4caf50;
+  background-color: var(--gold-accent);
   flex: 1;
 }
 
-.save-btn:hover {
-  background-color: #43a047;
+.save-btn:hover:not(:disabled) {
+  background-color: var(--gold-primary);
 }
 
 .cancel-btn {
-  background-color: #757575;
+  background-color: var(--light-gray);
   flex: 1;
 }
 
 .cancel-btn:hover {
-  background-color: #616161;
+  background-color: var(--lighter-gray);
 }
 
 .primary-btn {
-  background-color: #0a47f0;
+  background-color: var(--gold-primary);
   min-width: 120px;
 }
 
@@ -371,11 +461,11 @@ button:hover {
 }
 
 kbd {
-  background-color: #333;
+  background-color: var(--medium-gray);
   border-radius: 3px;
-  border: 1px solid #666;
+  border: 1px solid var(--gold-dark);
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-  color: #fff;
+  color: var(--gold-light);
   display: inline-block;
   font-size: 0.85em;
   font-family: monospace;
@@ -400,7 +490,7 @@ kbd {
 .mode-option {
   flex: 1;
   padding: 8px 10px;
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: var(--medium-gray);
   border-radius: 6px;
   text-align: center;
   cursor: pointer;
@@ -408,14 +498,24 @@ kbd {
   font-size: 0.8rem;
 }
 
+.mode-option:hover:not(.disabled-mode) {
+  background-color: rgba(212, 175, 55, 0.1);
+}
+
 .mode-option.selected {
-  background-color: rgba(33, 150, 243, 0.2);
-  border: 1px solid rgba(33, 150, 243, 0.5);
+  background-color: rgba(212, 175, 55, 0.2);
+  border: 1px solid var(--gold-accent);
+  color: var(--gold-light);
+}
+
+.mode-option.disabled-mode {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .mode-description {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--gold-light);
   margin-top: 8px;
   text-align: center;
   font-style: italic;
@@ -433,6 +533,7 @@ kbd {
   padding: 10px;
   z-index: 5;
   transition: opacity 0.3s ease;
+  color: var(--gold-light);
 }
 
 /* Footer inside control panel */
@@ -447,12 +548,14 @@ kbd {
 .footer-copyright {
   font-weight: 500;
   letter-spacing: 1px;
+  color: var(--gold-primary);
 }
 
 .footer-name {
   font-size: 0.65rem;
   margin-top: 4px;
   opacity: 0.7;
+  color: var(--gold-light);
 }
 
 /* Footer visibility states */
@@ -464,16 +567,58 @@ kbd {
   opacity: 0.15;
 }
 
+/* Theme Controller */
+.theme-controller {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.theme-option {
+  flex: 1;
+  padding: 8px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  font-size: 0.8rem;
+}
+
+.theme-option.dark {
+  background-color: #212121;
+  color: #f5f5f5;
+}
+
+.theme-option.light {
+  background-color: #f5f5f5;
+  color: #212121;
+}
+
+.theme-option.gray-gold {
+  background-color: var(--dark-gray);
+  color: var(--gold-primary);
+  border: 1px solid var(--gold-dark);
+}
+
+.theme-option.selected {
+  border: 2px solid var(--gold-primary);
+  transform: scale(1.05);
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
   .control-panel {
     width: 100%;
   }
-  
+
   .current-number.single-digit,
   .current-number.double-digit,
   .current-number.triple-digit,
   .current-number.multi-digit {
     font-size: 40vw;
+  }
+
+  .theme-controller {
+    flex-direction: column;
   }
 }

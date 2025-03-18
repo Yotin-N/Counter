@@ -10,7 +10,6 @@ const ControlPanel = ({
   countdownSets,
   isCountingDown,
   setIsCountingDown,
-  // onMouseLeave,
   onEditSet,
   onRemoveSet,
   currentSetIndex,
@@ -23,6 +22,8 @@ const ControlPanel = ({
   const [editValue, setEditValue] = useState("");
 
   const handleAddSet = () => {
+    if (isCountingDown) return; // Prevent adding sets while counting down
+
     const value = parseInt(newSetValue);
     if (!isNaN(value) && value > 0) {
       onAddSet(value);
@@ -35,11 +36,15 @@ const ControlPanel = ({
   };
 
   const startEditingSet = (index, currentValue) => {
+    if (isCountingDown) return; // Prevent editing while counting down
+
     setEditingIndex(index);
     setEditValue(currentValue.toString());
   };
 
   const saveEdit = (index) => {
+    if (isCountingDown) return; // Prevent saving edits while counting down
+
     const value = parseInt(editValue);
     if (!isNaN(value) && value > 0) {
       onEditSet(index, value);
@@ -52,13 +57,18 @@ const ControlPanel = ({
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !isCountingDown) {
       handleAddSet();
     }
   };
 
+  // Render a message when counting down
+
+
   return (
     <div className={`control-panel ${visible ? "visible" : "hidden"}`}>
+
+
       <div className="control-section">
         <h3>Add Countdown Set</h3>
         <div className="input-group">
@@ -69,8 +79,15 @@ const ControlPanel = ({
             onChange={(e) => setNewSetValue(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Starting value"
+            disabled={isCountingDown}
           />
-          <button onClick={handleAddSet}>Add</button>
+          <button
+            onClick={handleAddSet}
+            disabled={isCountingDown}
+            className={isCountingDown ? "disabled-btn" : ""}
+          >
+            Add
+          </button>
         </div>
       </div>
 
@@ -83,8 +100,8 @@ const ControlPanel = ({
             {countdownSets.map((set, index) => (
               <li
                 key={index}
-                className={index === currentSetIndex ? "current-set" : ""}
-                onClick={() => onSelectSet(index)}
+                className={`${index === currentSetIndex ? "current-set" : ""} ${isCountingDown ? "counting-set" : ""}`}
+                onClick={() => !isCountingDown && onSelectSet(index)}
               >
                 {editingIndex === index ? (
                   <div className="edit-set-form">
@@ -94,15 +111,20 @@ const ControlPanel = ({
                       value={editValue}
                       onChange={(e) => setEditValue(e.target.value)}
                       autoFocus
+                      disabled={isCountingDown}
                     />
                     <div className="edit-buttons">
                       <button
                         onClick={() => saveEdit(index)}
-                        className="save-btn"
+                        className={`save-btn ${isCountingDown ? "disabled-btn" : ""}`}
+                        disabled={isCountingDown}
                       >
                         Save
                       </button>
-                      <button onClick={cancelEdit} className="cancel-btn">
+                      <button
+                        onClick={cancelEdit}
+                        className="cancel-btn"
+                      >
                         Cancel
                       </button>
                     </div>
@@ -124,18 +146,20 @@ const ControlPanel = ({
                           e.stopPropagation();
                           startEditingSet(index, set.startValue);
                         }}
-                        className="icon-btn edit-btn"
+                        className={`icon-btn edit-btn ${isCountingDown ? "disabled-btn" : ""}`}
                         title="Edit set"
+                        disabled={isCountingDown}
                       >
                         ✎
                       </button>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          onRemoveSet(index);
+                          if (!isCountingDown) onRemoveSet(index);
                         }}
-                        className="icon-btn delete-btn"
+                        className={`icon-btn delete-btn ${isCountingDown ? "disabled-btn" : ""}`}
                         title="Remove set"
+                        disabled={isCountingDown}
                       >
                         ×
                       </button>
@@ -148,23 +172,21 @@ const ControlPanel = ({
         )}
       </div>
 
-      {/* New countdown mode selection */}
+      {/* Countdown mode selection */}
       <div className="control-section mode-section">
         <h3>Count Mode</h3>
         <div className="mode-selection">
           <div
-            className={`mode-option ${
-              countdownMode === "single" ? "selected" : ""
-            }`}
-            onClick={() => setCountdownMode("single")}
+            className={`mode-option ${countdownMode === "single" ? "selected" : ""
+              } ${isCountingDown ? "disabled-mode" : ""}`}
+            onClick={() => !isCountingDown && setCountdownMode("single")}
           >
             Single Press
           </div>
           <div
-            className={`mode-option ${
-              countdownMode === "hold" ? "selected" : ""
-            }`}
-            onClick={() => setCountdownMode("hold")}
+            className={`mode-option ${countdownMode === "hold" ? "selected" : ""
+              } ${isCountingDown ? "disabled-mode" : ""}`}
+            onClick={() => !isCountingDown && setCountdownMode("hold")}
           >
             Hold Mode
           </div>
@@ -178,8 +200,20 @@ const ControlPanel = ({
               {isCountingDown ? "Pause" : "Start"}
             </button>
           )}
-          <button onClick={onResetCurrent}>Reset Set</button>
-          <button onClick={onResetAll}>Reset All</button>
+          <button
+            onClick={onResetCurrent}
+            className={isCountingDown ? "disabled-btn" : ""}
+            disabled={isCountingDown}
+          >
+            Reset Set
+          </button>
+          <button
+            onClick={onResetAll}
+            className={isCountingDown ? "disabled-btn" : ""}
+            disabled={isCountingDown}
+          >
+            Reset All
+          </button>
         </div>
       </div>
 
@@ -193,7 +227,10 @@ const ControlPanel = ({
             Press <kbd>Esc</kbd> to toggle controls
           </li>
           <li>
-            Press <kbd>Ctrl+R</kbd> to reset current set
+            Press <kbd>Shift+R</kbd> to reset current set
+          </li>
+          <li>
+            Press <kbd>Shift+N</kbd> to move to next set when current set reaches 0
           </li>
           <li>Click on the display area to decrease when counting</li>
           <li>Move mouse to the right edge to show controls</li>

@@ -1,7 +1,7 @@
 // src/components/CountdownDisplay.jsx
 import React, { useEffect, useState } from "react";
 
-const CountdownDisplay = ({ currentValue, isCountingDown }) => {
+const CountdownDisplay = ({ currentValue, isCountingDown, showNextSetHint }) => {
   const [sizeClass, setSizeClass] = useState("");
 
   useEffect(() => {
@@ -21,9 +21,18 @@ const CountdownDisplay = ({ currentValue, isCountingDown }) => {
 
   return (
     <div className="countdown-display">
-      <div className={`current-number ${sizeClass}`}>{currentValue}</div>
+      <div className={`current-number ${sizeClass}`}>
+        <span>{currentValue}</span>
+      </div>
+
       {!isCountingDown && currentValue > 0 && (
         <div className="start-hint">Press Enter or Space</div>
+      )}
+
+      {showNextSetHint && (
+        <div className="next-set-hint">
+          Press Shift+N to go to the next set
+        </div>
       )}
     </div>
   );

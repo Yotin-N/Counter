@@ -25,6 +25,10 @@ function App() {
     return savedState ? JSON.parse(savedState) : false;
   });
 
+  // Add new state for showing the "next set" hint
+  const [showNextSetHint, setShowNextSetHint] = useState(false);
+  const [reachedZero, setReachedZero] = useState(false);
+
   // Track if a key or mouse button is currently being held down
   const [isKeyHeld, setIsKeyHeld] = useState(false);
   const [isMouseHeld, setIsMouseHeld] = useState(false);
@@ -87,6 +91,31 @@ function App() {
     }
   }, [showControls, isCountingDown, countdownSets.length]);
 
+  // Check if current set has reached zero to show the next set hint
+  useEffect(() => {
+    if (
+      countdownSets.length > 0 &&
+      currentSetIndex < countdownSets.length &&
+      countdownSets[currentSetIndex].currentValue === 0 &&
+      isCountingDown
+    ) {
+      // Show "Press Shift+N to go to the next set" hint
+      setShowNextSetHint(true);
+      setReachedZero(true);
+
+      // Automatically pause counting
+      setIsCountingDown(false);
+    } else if (
+      countdownSets.length > 0 &&
+      currentSetIndex < countdownSets.length &&
+      countdownSets[currentSetIndex].currentValue > 0
+    ) {
+      // Reset flags when value is greater than 0
+      setShowNextSetHint(false);
+      setReachedZero(false);
+    }
+  }, [countdownSets, currentSetIndex, isCountingDown]);
+
   const addCountdownSet = (startValue) => {
     setCountdownSets([
       ...countdownSets,
@@ -131,14 +160,40 @@ function App() {
     });
   }, [countdownSets, currentSetIndex, isCountingDown]);
 
+  // Move to the next set
+  const moveToNextSet = useCallback(() => {
+    if (countdownSets.length <= 1) return;
+
+    // Calculate the next index with wraparound
+    const nextIndex = (currentSetIndex + 1) % countdownSets.length;
+    setCurrentSetIndex(nextIndex);
+
+    // Start the countdown for the new set
+    setIsCountingDown(true);
+  }, [countdownSets.length, currentSetIndex]);
+
   // Handle keyboard events for counting
   useEffect(() => {
     // These keys will trigger the countdown
-    const countKeys = ["Enter", "Space"];
+    const countKeys = ["Enter", " ", "Space"];
 
     const handleKeyDown = (e) => {
+      // Handle Shift+N key for next set navigation when current set is at 0
+      if (e.key === "N" && e.shiftKey && reachedZero) {
+        e.preventDefault();
+        moveToNextSet();
+        return;
+      }
+
+      // Handle Shift+R key for resetting current set
+      if (e.key === "R" && e.shiftKey) {
+        e.preventDefault();
+        resetCurrentSet();
+        return;
+      }
+
       // Check if it's one of our count keys
-      if (countKeys.includes(e.code)) {
+      if (countKeys.includes(e.code) || countKeys.includes(e.key)) {
         e.preventDefault(); // Prevent page scrolling on spacebar
 
         // Only process if the key wasn't already being held down
@@ -159,16 +214,12 @@ function App() {
         }
       } else if (e.key === "Escape") {
         setShowControls((prev) => !prev);
-      } else if (e.key === "r" && e.ctrlKey) {
-        // Reset only the current set instead of all sets
-        resetCurrentSet();
-        e.preventDefault();
       }
     };
 
     const handleKeyUp = (e) => {
       // Reset key held state when the key is released
-      if (countKeys.includes(e.code)) {
+      if (countKeys.includes(e.code) || countKeys.includes(e.key)) {
         setIsKeyHeld(false);
       }
     };
@@ -187,6 +238,9 @@ function App() {
     currentSetIndex,
     countdownMode,
     isKeyHeld,
+    moveToNextSet,
+    reachedZero,
+    resetCurrentSet
   ]);
 
   // Auto-decrement timer for hold mode
@@ -279,9 +333,8 @@ function App() {
     <div className="app-container" onMouseMove={handleMouseMove}>
       {/* Control panel indicator */}
       <div
-        className={`control-panel-indicator ${
-          showControlIndicator ? "visible" : "hidden"
-        }`}
+        className={`control-panel-indicator ${showControlIndicator ? "visible" : "hidden"
+          }`}
       />
 
       <div
@@ -294,6 +347,7 @@ function App() {
         <CountdownDisplay
           currentValue={currentValue}
           isCountingDown={isCountingDown}
+          showNextSetHint={showNextSetHint}
         />
 
         <ControlPanel
