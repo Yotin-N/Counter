@@ -1,4 +1,4 @@
-// src/App.jsx with hold function removed
+// src/App.jsx with additional features
 import { useState, useEffect, useCallback, useRef } from "react";
 import "./App.css";
 import CountdownDisplay from "./components/CountdownDisplay";
@@ -45,6 +45,14 @@ function App() {
   // New state for control panel indicator
   const [showControlIndicator, setShowControlIndicator] = useState(false);
 
+  // New state for display modes
+  const [displayMode, setDisplayMode] = useState("normal"); // "normal", "background-only", "work-image"
+
+  // New state for work image url (can be updated via settings)
+  const [workImageUrl, setWorkImageUrl] = useState(() => {
+    return localStorage.getItem('workImageUrl') || "https://eng.buu.ac.th/web2020/wp-content/uploads/2021/04/Buu-logo11.png";
+  });
+
   // Reference to the display area for click handling
   const displayRef = useRef(null);
 
@@ -56,6 +64,11 @@ function App() {
   useEffect(() => {
     localStorage.setItem('countdownBackgroundColor', backgroundColor);
   }, [backgroundColor]);
+
+  // Save work image URL to localStorage
+  useEffect(() => {
+    localStorage.setItem('workImageUrl', workImageUrl);
+  }, [workImageUrl]);
 
   // Save state to localStorage whenever it changes
   useEffect(() => {
@@ -186,6 +199,22 @@ function App() {
     const countKeys = ["Enter", " ", "Space"];
 
     const handleKeyDown = (e) => {
+      // Handle Shift+1 to show background only (no numbers)
+      if ((e.key === "1" || e.key === "!") && e.shiftKey) {
+        e.preventDefault();
+        console.log("Shift+1 pressed, toggling background-only mode");
+        setDisplayMode(prev => prev === "background-only" ? "normal" : "background-only");
+        return;
+      }
+
+      // Handle Shift+2 to show work image
+      if ((e.key === "2" || e.key === "@") && e.shiftKey) {
+        e.preventDefault();
+        console.log("Shift+2 pressed, toggling work-image mode");
+        setDisplayMode(prev => prev === "work-image" ? "normal" : "work-image");
+        return;
+      }
+
       // Handle Shift+N key for next set navigation when current set is at 0
       if (e.key === "N" && e.shiftKey && reachedZero) {
         e.preventDefault();
@@ -313,6 +342,8 @@ function App() {
           showNextSetHint={showNextSetHint}
           fontColor={fontColor}
           backgroundColor={backgroundColor}
+          displayMode={displayMode}
+          workImageUrl={workImageUrl}
         />
 
         <ControlPanel
@@ -351,6 +382,7 @@ function App() {
           setFontColor={setFontColor}
           backgroundColor={backgroundColor}
           setBackgroundColor={setBackgroundColor}
+
         />
       </div>
     </div>

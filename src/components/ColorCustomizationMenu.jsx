@@ -8,9 +8,9 @@ const ColorCustomizationMenu = ({
     backgroundColor,
     setBackgroundColor
 }) => {
-    // Gold color palette for font colors
+
     const goldPalette = [
-        { name: "Bright Yellow", value: "#ffee00" }, // Added new default first
+        { name: "Bright Yellow", value: "#ffee00" },
         { name: "Classic Gold", value: "#d4af37" },
         { name: "Light Gold", value: "#f5e7a3" },
         { name: "Rich Gold", value: "#fcc200" },
@@ -18,9 +18,9 @@ const ColorCustomizationMenu = ({
         { name: "Harvest Gold", value: "#daa520   " }
     ];
 
-    // Gray color palette for background colors
+
     const grayPalette = [
-        { name: "Medium Gray", value: "#666363" }, // Added new default first
+        { name: "Medium Gray", value: "#666363" },
         { name: "Dark Gray", value: "#2b2b2b" },
         { name: "Charcoal", value: "#1e1e1e" },
         { name: "Slate Gray", value: "#4d4d4d" },
@@ -28,7 +28,6 @@ const ColorCustomizationMenu = ({
         { name: "Deep Gray", value: "#222222" }
     ];
 
-    // Save color preferences to localStorage whenever they change
     useEffect(() => {
         localStorage.setItem('countdownFontColor', fontColor);
         localStorage.setItem('countdownBackgroundColor', backgroundColor);

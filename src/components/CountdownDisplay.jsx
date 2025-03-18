@@ -6,7 +6,9 @@ const CountdownDisplay = ({
   isCountingDown,
   showNextSetHint,
   fontColor,
-  backgroundColor
+  backgroundColor,
+  displayMode = "normal",
+  workImageUrl
 }) => {
   const [sizeClass, setSizeClass] = useState("");
 
@@ -31,17 +33,34 @@ const CountdownDisplay = ({
     color: fontColor
   };
 
+  // Work image display mode
+  if (displayMode === "work-image") {
+    return (
+      <div className="countdown-display" style={customStyles}>
+        <div className="work-image-container">
+          <img
+            src={workImageUrl}
+            alt="Work"
+            className="work-image"
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="countdown-display" style={customStyles}>
-      <div className={`current-number ${sizeClass}`} style={{ color: fontColor }}>
-        <span>{currentValue}</span>
-      </div>
+      {displayMode === "normal" && (
+        <div className={`current-number ${sizeClass}`} style={{ color: fontColor }}>
+          <span>{currentValue}</span>
+        </div>
+      )}
 
-      {!isCountingDown && currentValue > 0 && (
+      {!isCountingDown && currentValue > 0 && displayMode === "normal" && (
         <div className="start-hint">Press Enter or Space</div>
       )}
 
-      {showNextSetHint && (
+      {showNextSetHint && displayMode === "normal" && (
         <div className="next-set-hint">
           Press Shift+N to go to the next set
         </div>
