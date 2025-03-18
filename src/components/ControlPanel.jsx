@@ -1,6 +1,7 @@
 // src/components/ControlPanel.jsx
 import React, { useState } from "react";
 import Footer from "./Footer";
+import ColorCustomizationMenu from "./ColorCustomizationMenu";
 
 const ControlPanel = ({
   visible,
@@ -16,6 +17,10 @@ const ControlPanel = ({
   onSelectSet,
   countdownMode,
   setCountdownMode,
+  fontColor,
+  setFontColor,
+  backgroundColor,
+  setBackgroundColor,
 }) => {
   const [newSetValue, setNewSetValue] = useState("");
   const [editingIndex, setEditingIndex] = useState(null);
@@ -62,13 +67,8 @@ const ControlPanel = ({
     }
   };
 
-  // Render a message when counting down
-
-
   return (
     <div className={`control-panel ${visible ? "visible" : "hidden"}`}>
-
-
       <div className="control-section">
         <h3>Add Countdown Set</h3>
         <div className="input-group">
@@ -177,21 +177,20 @@ const ControlPanel = ({
         <h3>Count Mode</h3>
         <div className="mode-selection">
           <div
-            className={`mode-option ${countdownMode === "single" ? "selected" : ""
-              } ${isCountingDown ? "disabled-mode" : ""}`}
+            className={`mode-option ${countdownMode === "single" ? "selected" : ""} ${isCountingDown ? "disabled-mode" : ""}`}
             onClick={() => !isCountingDown && setCountdownMode("single")}
           >
             Single Press
           </div>
           <div
-            className={`mode-option ${countdownMode === "hold" ? "selected" : ""
-              } ${isCountingDown ? "disabled-mode" : ""}`}
+            className={`mode-option ${countdownMode === "hold" ? "selected" : ""} ${isCountingDown ? "disabled-mode" : ""}`}
             onClick={() => !isCountingDown && setCountdownMode("hold")}
           >
             Hold Mode
           </div>
         </div>
       </div>
+
 
       <div className="control-section">
         <div className="button-group">
@@ -216,6 +215,16 @@ const ControlPanel = ({
           </button>
         </div>
       </div>
+
+
+      {/* Color Customization Menu */}
+      <ColorCustomizationMenu
+        isCountingDown={isCountingDown}
+        fontColor={fontColor}
+        setFontColor={setFontColor}
+        backgroundColor={backgroundColor}
+        setBackgroundColor={setBackgroundColor}
+      />
 
       <div className="instructions">
         <h3>Instructions</h3>

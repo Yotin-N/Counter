@@ -1,7 +1,13 @@
 // src/components/CountdownDisplay.jsx
 import React, { useEffect, useState } from "react";
 
-const CountdownDisplay = ({ currentValue, isCountingDown, showNextSetHint }) => {
+const CountdownDisplay = ({
+  currentValue,
+  isCountingDown,
+  showNextSetHint,
+  fontColor,
+  backgroundColor
+}) => {
   const [sizeClass, setSizeClass] = useState("");
 
   useEffect(() => {
@@ -19,9 +25,15 @@ const CountdownDisplay = ({ currentValue, isCountingDown, showNextSetHint }) => 
     }
   }, [currentValue]);
 
+  // Custom styles for the display based on selected colors
+  const customStyles = {
+    backgroundColor: backgroundColor,
+    color: fontColor
+  };
+
   return (
-    <div className="countdown-display">
-      <div className={`current-number ${sizeClass}`}>
+    <div className="countdown-display" style={customStyles}>
+      <div className={`current-number ${sizeClass}`} style={{ color: fontColor }}>
         <span>{currentValue}</span>
       </div>
 

@@ -6,6 +6,20 @@ import ControlPanel from "./components/ControlPanel";
 import Footer from "./components/Footer";
 
 function App() {
+  // Load color preferences from localStorage or use defaults
+  const [fontColor, setFontColor] = useState(() => {
+    return localStorage.getItem('countdownFontColor') || "#d4af37";
+  });
+
+  const [backgroundColor, setBackgroundColor] = useState(() => {
+    return localStorage.getItem('countdownBackgroundColor') || "#2b2b2b";
+  });
+
+  // REMOVED: Don't change the CSS variables for the entire application
+  // useEffect(() => {
+  //   document.documentElement.style.setProperty('--gold-primary', fontColor);
+  // }, [fontColor]);
+
   const [countdownSets, setCountdownSets] = useState(() => {
     // Load from localStorage on initial render
     const savedSets = localStorage.getItem("countdownSets");
@@ -44,6 +58,15 @@ function App() {
 
   // Reference to the display area for click handling
   const displayRef = useRef(null);
+
+  // Save color settings to localStorage
+  useEffect(() => {
+    localStorage.setItem('countdownFontColor', fontColor);
+  }, [fontColor]);
+
+  useEffect(() => {
+    localStorage.setItem('countdownBackgroundColor', backgroundColor);
+  }, [backgroundColor]);
 
   // Save state to localStorage whenever it changes
   useEffect(() => {
@@ -348,6 +371,8 @@ function App() {
           currentValue={currentValue}
           isCountingDown={isCountingDown}
           showNextSetHint={showNextSetHint}
+          fontColor={fontColor}
+          backgroundColor={backgroundColor}
         />
 
         <ControlPanel
@@ -384,6 +409,10 @@ function App() {
           onSelectSet={changeCurrentSet}
           countdownMode={countdownMode}
           setCountdownMode={setCountdownMode}
+          fontColor={fontColor}
+          setFontColor={setFontColor}
+          backgroundColor={backgroundColor}
+          setBackgroundColor={setBackgroundColor}
         />
       </div>
     </div>
