@@ -1,3 +1,4 @@
+// src/components/ControlPanel.jsx
 import React, { useState } from "react";
 import Footer from "./Footer";
 import ColorCustomizationMenu from "./ColorCustomizationMenu";
@@ -14,8 +15,6 @@ const ControlPanel = ({
   onRemoveSet,
   currentSetIndex,
   onSelectSet,
-  countdownMode,
-  setCountdownMode,
   fontColor,
   setFontColor,
   backgroundColor,
@@ -171,24 +170,7 @@ const ControlPanel = ({
         )}
       </div>
 
-      {/* Countdown mode selection */}
-      <div className="control-section mode-section">
-        <h3>Count Mode</h3>
-        <div className="mode-selection">
-          <div
-            className={`mode-option ${countdownMode === "single" ? "selected" : ""} ${isCountingDown ? "disabled-mode" : ""}`}
-            onClick={() => !isCountingDown && setCountdownMode("single")}
-          >
-            Single Press
-          </div>
-          <div
-            className={`mode-option ${countdownMode === "hold" ? "selected" : ""} ${isCountingDown ? "disabled-mode" : ""}`}
-            onClick={() => !isCountingDown && setCountdownMode("hold")}
-          >
-            Hold Mode
-          </div>
-        </div>
-      </div>
+
 
 
       <div className="control-section">
@@ -215,7 +197,7 @@ const ControlPanel = ({
         </div>
       </div>
 
-
+      {/* Color Customization Menu */}
       <ColorCustomizationMenu
         isCountingDown={isCountingDown}
         fontColor={fontColor}
