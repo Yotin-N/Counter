@@ -13,9 +13,9 @@ const ColorCustomizationMenu = ({
         { name: "Bright Yellow", value: "#ffee00" }, // Added new default first
         { name: "Classic Gold", value: "#d4af37" },
         { name: "Light Gold", value: "#f5e7a3" },
-        { name: "Rich Gold", value: "#996515" },
+        { name: "Rich Gold", value: "#fcc200" },
         { name: "Yellow Gold", value: "#ffd700" },
-        { name: "Rose Gold", value: "#b76e79" }
+        { name: "Harvest Gold", value: "#daa520   " }
     ];
 
     // Gray color palette for background colors
