@@ -1,69 +1,97 @@
-// src/components/DisplayModeSettings.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+// Import the image directly - ensure this path is correct relative to this component
+import workImage from "../assets/work.png";
 
-const DisplayModeSettings = ({
-    isCountingDown,
-    displayMode,
-    setDisplayMode,
-    workImageUrl,
-    setWorkImageUrl
+const CountdownDisplay = ({
+  currentValue,
+  isCountingDown,
+  showNextSetHint,
+  fontColor,
+  backgroundColor,
+  displayMode = "normal",
+  mouseClickEnabled = true,
 }) => {
-    const [editingImageUrl, setEditingImageUrl] = useState(false);
-    const [tempImageUrl, setTempImageUrl] = useState(workImageUrl);
+  const [sizeClass, setSizeClass] = useState("");
+  const [imageError, setImageError] = useState(false);
 
-    const handleDisplayModeChange = (mode) => {
-        if (isCountingDown) return; // Prevent changing display mode while counting down
-        setDisplayMode(mode);
-    };
+  useEffect(() => {
+    // Determine digit count and set appropriate size class
+    const digitCount = currentValue.toString().length;
 
-    const handleSaveImageUrl = () => {
-        setWorkImageUrl(tempImageUrl);
-        setEditingImageUrl(false);
-    };
+    if (digitCount <= 1) {
+      setSizeClass("single-digit");
+    } else if (digitCount === 2) {
+      setSizeClass("double-digit");
+    } else if (digitCount === 3) {
+      setSizeClass("triple-digit");
+    } else {
+      setSizeClass("multi-digit");
+    }
+  }, [currentValue]);
 
+  // Custom styles for the display based on selected colors
+  const customStyles = {
+    backgroundColor:
+      displayMode === "black-screen" ? "#000000" : backgroundColor,
+    color: fontColor,
+    // Set cursor style based on whether mouse clicks are enabled
+    cursor: mouseClickEnabled ? "pointer" : "default",
+  };
+
+  // Work image display mode
+  if (displayMode === "work-image") {
     return (
-        <div className="control-section">
-            <h3>Display Mode</h3>
-
-            <div className="mode-selection">
-                <div
-                    className={`mode-option ${displayMode === "normal" ? "selected" : ""} ${isCountingDown ? "disabled-mode" : ""}`}
-                    onClick={() => handleDisplayModeChange("normal")}
-                >
-                    Numbers
-                </div>
-                <div
-                    className={`mode-option ${displayMode === "background-only" ? "selected" : ""} ${isCountingDown ? "disabled-mode" : ""}`}
-                    onClick={() => handleDisplayModeChange("background-only")}
-                >
-                    Background Only
-                </div>
-                <div
-                    className={`mode-option ${displayMode === "work-image" ? "selected" : ""} ${isCountingDown ? "disabled-mode" : ""}`}
-                    onClick={() => handleDisplayModeChange("work-image")}
-                >
-                    Work Image
-                </div>
+      <div className="countdown-display" style={customStyles}>
+        <div className="work-image-container">
+          {imageError ? (
+            <div
+              style={{
+                color: fontColor,
+                textAlign: "center",
+                padding: "20px",
+                fontSize: "1.2rem",
+              }}
+            >
+              Image could not be loaded. Please check the image path.
             </div>
-
-            <div className="mode-description">
-                {displayMode === "normal" && "Shows countdown numbers"}
-                {displayMode === "background-only" && "Shows only the background color, no numbers"}
-                {displayMode === "work-image" && "Displays a work image instead of numbers"}
-            </div>
-
-            {/* Work Image URL setting */}
-            {displayMode === "work-image" && (
-                <div className="work-image-container">
-                    <img src="../assets/work.jpg" alt="Work" className="work-image" />
-                </div>
-            )}
-
-            <div className="mode-shortcuts" style={{ marginTop: "10px", fontSize: "0.75rem", opacity: 0.7 }}>
-                Quick Access: <kbd>Shift+1</kbd> for Background, <kbd>Shift+2</kbd> for Work Image
-            </div>
+          ) : (
+            <img
+              src={workImage}
+              alt="Work"
+              className="work-image"
+              onError={() => setImageError(true)}
+              style={{ maxWidth: "100%", maxHeight: "100%" }}
+            />
+          )}
         </div>
+      </div>
     );
+  }
+
+  return (
+    <div className="countdown-display" style={customStyles}>
+      {displayMode === "normal" && (
+        <div
+          className={`current-number ${sizeClass}`}
+          style={{ color: fontColor }}
+        >
+          <span>{currentValue}</span>
+        </div>
+      )}
+
+      {!isCountingDown && currentValue > 0 && displayMode === "normal" && (
+        <div className="start-hint">
+          {mouseClickEnabled
+            ? "Press Enter/Space or Click"
+            : "Press Enter or Space"}
+        </div>
+      )}
+
+      {showNextSetHint && displayMode === "normal" && (
+        <div className="next-set-hint">Press Shift+N to go to the next set</div>
+      )}
+    </div>
+  );
 };
 
-export default DisplayModeSettings;
+export default CountdownDisplay;

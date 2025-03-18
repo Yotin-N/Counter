@@ -19,6 +19,8 @@ const ControlPanel = ({
   setFontColor,
   backgroundColor,
   setBackgroundColor,
+  mouseClickEnabled,
+  setMouseClickEnabled,
 }) => {
   const [newSetValue, setNewSetValue] = useState("");
   const [editingIndex, setEditingIndex] = useState(null);
@@ -98,7 +100,9 @@ const ControlPanel = ({
             {countdownSets.map((set, index) => (
               <li
                 key={index}
-                className={`${index === currentSetIndex ? "current-set" : ""} ${isCountingDown ? "counting-set" : ""}`}
+                className={`${index === currentSetIndex ? "current-set" : ""} ${
+                  isCountingDown ? "counting-set" : ""
+                }`}
                 onClick={() => !isCountingDown && onSelectSet(index)}
               >
                 {editingIndex === index ? (
@@ -114,15 +118,14 @@ const ControlPanel = ({
                     <div className="edit-buttons">
                       <button
                         onClick={() => saveEdit(index)}
-                        className={`save-btn ${isCountingDown ? "disabled-btn" : ""}`}
+                        className={`save-btn ${
+                          isCountingDown ? "disabled-btn" : ""
+                        }`}
                         disabled={isCountingDown}
                       >
                         Save
                       </button>
-                      <button
-                        onClick={cancelEdit}
-                        className="cancel-btn"
-                      >
+                      <button onClick={cancelEdit} className="cancel-btn">
                         Cancel
                       </button>
                     </div>
@@ -144,7 +147,9 @@ const ControlPanel = ({
                           e.stopPropagation();
                           startEditingSet(index, set.startValue);
                         }}
-                        className={`icon-btn edit-btn ${isCountingDown ? "disabled-btn" : ""}`}
+                        className={`icon-btn edit-btn ${
+                          isCountingDown ? "disabled-btn" : ""
+                        }`}
                         title="Edit set"
                         disabled={isCountingDown}
                       >
@@ -155,7 +160,9 @@ const ControlPanel = ({
                           e.stopPropagation();
                           if (!isCountingDown) onRemoveSet(index);
                         }}
-                        className={`icon-btn delete-btn ${isCountingDown ? "disabled-btn" : ""}`}
+                        className={`icon-btn delete-btn ${
+                          isCountingDown ? "disabled-btn" : ""
+                        }`}
                         title="Remove set"
                         disabled={isCountingDown}
                       >
@@ -169,9 +176,6 @@ const ControlPanel = ({
           </ul>
         )}
       </div>
-
-
-
 
       <div className="control-section">
         <div className="button-group">
@@ -197,6 +201,27 @@ const ControlPanel = ({
         </div>
       </div>
 
+      {/* Interaction Options */}
+      <div className="control-section">
+        <h3>Interaction Options</h3>
+
+        {/* Mouse Click Toggle */}
+        <div className="mode-selection" style={{ marginBottom: "15px" }}>
+          <div
+            className={`mode-option ${mouseClickEnabled ? "selected" : ""}`}
+            onClick={() => setMouseClickEnabled(true)}
+          >
+            Mouse Click Enabled
+          </div>
+          <div
+            className={`mode-option ${!mouseClickEnabled ? "selected" : ""}`}
+            onClick={() => setMouseClickEnabled(false)}
+          >
+            Mouse Click Disabled
+          </div>
+        </div>
+      </div>
+
       {/* Color Customization Menu */}
       <ColorCustomizationMenu
         isCountingDown={isCountingDown}
@@ -219,9 +244,12 @@ const ControlPanel = ({
             Press <kbd>Shift+R</kbd> to reset current set
           </li>
           <li>
-            Press <kbd>Shift+N</kbd> to move to next set when current set reaches 0
+            Press <kbd>Shift+N</kbd> to move to next set when current set
+            reaches 0
           </li>
-          <li>Click on the display area to decrease when counting</li>
+          {mouseClickEnabled && (
+            <li>Click on the display area to decrease when counting</li>
+          )}
           <li>Move mouse to the right edge to show controls</li>
         </ul>
       </div>

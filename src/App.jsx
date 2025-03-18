@@ -2,15 +2,16 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import "./App.css";
 import CountdownDisplay from "./components/CountdownDisplay";
 import ControlPanel from "./components/ControlPanel";
+import workImg from "./assets/work.png";
 
 function App() {
   // Load color preferences from localStorage or use NEW DEFAULT VALUES
   const [fontColor, setFontColor] = useState(() => {
-    return localStorage.getItem('countdownFontColor') || "#ffee00";  // New default: bright yellow
+    return localStorage.getItem("countdownFontColor") || "#ffee00"; // New default: bright yellow
   });
 
   const [backgroundColor, setBackgroundColor] = useState(() => {
-    return localStorage.getItem('countdownBackgroundColor') || "#666363";  // New default: medium gray
+    return localStorage.getItem("countdownBackgroundColor") || "#666363"; // New default: medium gray
   });
 
   const [countdownSets, setCountdownSets] = useState(() => {
@@ -46,23 +47,31 @@ function App() {
   // New state for display modes
   const [displayMode, setDisplayMode] = useState("normal"); // "normal", "black-screen", "work-image"
 
-  // New state for work image url (can be updated via settings)
-
+  // New state for mouse click enablement
+  const [mouseClickEnabled, setMouseClickEnabled] = useState(() => {
+    const savedState = localStorage.getItem("mouseClickEnabled");
+    return savedState ? JSON.parse(savedState) : true; // Default to enabled
+  });
 
   // Reference to the display area for click handling
   const displayRef = useRef(null);
 
   // Save color settings to localStorage
   useEffect(() => {
-    localStorage.setItem('countdownFontColor', fontColor);
+    localStorage.setItem("countdownFontColor", fontColor);
   }, [fontColor]);
 
   useEffect(() => {
-    localStorage.setItem('countdownBackgroundColor', backgroundColor);
+    localStorage.setItem("countdownBackgroundColor", backgroundColor);
   }, [backgroundColor]);
 
-
-
+  // Save mouse click setting to localStorage
+  useEffect(() => {
+    localStorage.setItem(
+      "mouseClickEnabled",
+      JSON.stringify(mouseClickEnabled)
+    );
+  }, [mouseClickEnabled]);
 
   // Save state to localStorage whenever it changes
   useEffect(() => {
@@ -197,15 +206,20 @@ function App() {
       if ((e.key === "1" || e.key === "!") && e.shiftKey) {
         e.preventDefault();
         console.log("Shift+1 pressed, toggling black screen mode");
-        setDisplayMode(prev => prev === "black-screen" ? "normal" : "black-screen");
+        setDisplayMode((prev) =>
+          prev === "black-screen" ? "normal" : "black-screen"
+        );
         return;
       }
 
       // Handle Shift+2 to show work image
       if ((e.key === "2" || e.key === "@") && e.shiftKey) {
         e.preventDefault();
+        console.log(workImg);
         console.log("Shift+2 pressed, toggling work-image mode");
-        setDisplayMode(prev => prev === "work-image" ? "normal" : "work-image");
+        setDisplayMode((prev) =>
+          prev === "work-image" ? "normal" : "work-image"
+        );
         return;
       }
 
@@ -265,7 +279,7 @@ function App() {
     isKeyHeld,
     moveToNextSet,
     reachedZero,
-    resetCurrentSet
+    resetCurrentSet,
   ]);
 
   // Handle mouse movement to show/hide controls
@@ -290,8 +304,8 @@ function App() {
       return;
     }
 
-    // Only process if the mouse wasn't already being held down
-    if (!isMouseHeld) {
+    // Only process if mouse clicks are enabled and the mouse wasn't already being held down
+    if (mouseClickEnabled && !isMouseHeld) {
       setIsMouseHeld(true);
 
       if (!isCountingDown && countdownSets.length > 0) {
@@ -319,8 +333,9 @@ function App() {
     <div className="app-container" onMouseMove={handleMouseMove}>
       {/* Control panel indicator */}
       <div
-        className={`control-panel-indicator ${showControlIndicator ? "visible" : "hidden"
-          }`}
+        className={`control-panel-indicator ${
+          showControlIndicator ? "visible" : "hidden"
+        }`}
       />
 
       <div
@@ -337,7 +352,7 @@ function App() {
           fontColor={fontColor}
           backgroundColor={backgroundColor}
           displayMode={displayMode}
-
+          mouseClickEnabled={mouseClickEnabled}
         />
 
         <ControlPanel
@@ -378,6 +393,8 @@ function App() {
           setBackgroundColor={setBackgroundColor}
           displayMode={displayMode}
           setDisplayMode={setDisplayMode}
+          mouseClickEnabled={mouseClickEnabled}
+          setMouseClickEnabled={setMouseClickEnabled}
         />
       </div>
     </div>
