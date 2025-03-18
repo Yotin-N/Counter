@@ -6,19 +6,14 @@ import ControlPanel from "./components/ControlPanel";
 import Footer from "./components/Footer";
 
 function App() {
-  // Load color preferences from localStorage or use defaults
+  // Load color preferences from localStorage or use NEW DEFAULT VALUES
   const [fontColor, setFontColor] = useState(() => {
-    return localStorage.getItem('countdownFontColor') || "#d4af37";
+    return localStorage.getItem('countdownFontColor') || "#ffee00";  // New default: bright yellow
   });
 
   const [backgroundColor, setBackgroundColor] = useState(() => {
-    return localStorage.getItem('countdownBackgroundColor') || "#2b2b2b";
+    return localStorage.getItem('countdownBackgroundColor') || "#666363";  // New default: medium gray
   });
-
-  // REMOVED: Don't change the CSS variables for the entire application
-  // useEffect(() => {
-  //   document.documentElement.style.setProperty('--gold-primary', fontColor);
-  // }, [fontColor]);
 
   const [countdownSets, setCountdownSets] = useState(() => {
     // Load from localStorage on initial render

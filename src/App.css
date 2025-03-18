@@ -18,11 +18,13 @@
   --gold-dark: #9c8022;
   --text-light: #f5f5f5;
   --text-dark: #212121;
+  --buu-color-backgroud: #666363;
+  --buu-color-font: #ffee00;
 }
 
 body {
   font-family: 'Inter', 'Helvetica Neue', sans-serif;
-  background-color: var(--dark-gray);
+  background-color: var(--buu-color-backgroud);
   color: var(--text-light);
   overflow: hidden;
 }
@@ -66,7 +68,7 @@ body {
   /* Default size for 4+ digit numbers */
   font-weight: 500;
   /* Much lighter, more modern weight */
-  color: var(--gold-primary);
+  color: var(--buu-color-font);
   text-align: center;
   line-height: 1;
   transition: all 0.3s ease;

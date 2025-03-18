@@ -10,20 +10,19 @@ const ColorCustomizationMenu = ({
 }) => {
     // Gold color palette for font colors
     const goldPalette = [
-        { name: "Classic Gold", value: "#d3af37" },
+        { name: "Bright Yellow", value: "#ffee00" }, // Added new default first
+        { name: "Classic Gold", value: "#d4af37" },
         { name: "Light Gold", value: "#f5e7a3" },
-        { name: "Rich Gold", value: "#e5ad07" },
-        { name: "Yellow Gold", value: "#ffce01" },
-        { name: "BUU Gold", value: "#ffde16" },
-        { name: "Antique Gold", value: "#cfb53b" }
+        { name: "Rich Gold", value: "#996515" },
+        { name: "Yellow Gold", value: "#ffd700" },
+        { name: "Rose Gold", value: "#b76e79" }
     ];
 
     // Gray color palette for background colors
     const grayPalette = [
-        { name: "Medium Gray", value: "#555555" },
+        { name: "Medium Gray", value: "#666363" }, // Added new default first
         { name: "Dark Gray", value: "#2b2b2b" },
-
-        { name: "BUU Gray", value: "#808e8e" },
+        { name: "Charcoal", value: "#1e1e1e" },
         { name: "Slate Gray", value: "#4d4d4d" },
         { name: "Gunmetal", value: "#333333" },
         { name: "Deep Gray", value: "#222222" }
@@ -79,19 +78,7 @@ const ColorCustomizationMenu = ({
                 </div>
             </div>
 
-            {/*            
-            <div className="color-preview">
-                <div className="preview-label">Preview</div>
-                <div
-                    className="preview-box"
-                    style={{
-                        backgroundColor: backgroundColor,
-                        color: fontColor,
-                    }}
-                >
-                    123
-                </div>
-            </div> */}
+
         </div>
     );
 };
