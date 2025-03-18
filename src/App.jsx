@@ -1,52 +1,54 @@
+// src/App.jsx with hold function removed
 import { useState, useEffect, useCallback, useRef } from "react";
 import "./App.css";
 import CountdownDisplay from "./components/CountdownDisplay";
 import ControlPanel from "./components/ControlPanel";
+import Footer from "./components/Footer";
 
 function App() {
+  // Load color preferences from localStorage or use NEW DEFAULT VALUES
   const [fontColor, setFontColor] = useState(() => {
-    return localStorage.getItem('countdownFontColor') || "#ffee00";
+    return localStorage.getItem('countdownFontColor') || "#ffee00";  // New default: bright yellow
   });
 
   const [backgroundColor, setBackgroundColor] = useState(() => {
-    return localStorage.getItem('countdownBackgroundColor') || "#666363";
+    return localStorage.getItem('countdownBackgroundColor') || "#666363";  // New default: medium gray
   });
 
   const [countdownSets, setCountdownSets] = useState(() => {
+    // Load from localStorage on initial render
     const savedSets = localStorage.getItem("countdownSets");
     return savedSets ? JSON.parse(savedSets) : [];
   });
 
   const [currentSetIndex, setCurrentSetIndex] = useState(() => {
-
+    // Load current set index from localStorage
     const savedIndex = localStorage.getItem("currentSetIndex");
     return savedIndex ? parseInt(savedIndex) : 0;
   });
 
   const [showControls, setShowControls] = useState(false);
   const [isCountingDown, setIsCountingDown] = useState(() => {
+    // Load counting state from localStorage
     const savedState = localStorage.getItem("isCountingDown");
     return savedState ? JSON.parse(savedState) : false;
   });
+
+  // Add new state for showing the "next set" hint
   const [showNextSetHint, setShowNextSetHint] = useState(false);
   const [reachedZero, setReachedZero] = useState(false);
 
-
+  // Track if a key or mouse button is currently being held down
   const [isKeyHeld, setIsKeyHeld] = useState(false);
   const [isMouseHeld, setIsMouseHeld] = useState(false);
 
+  // New state for control panel indicator
   const [showControlIndicator, setShowControlIndicator] = useState(false);
 
-
-  const [countdownMode, setCountdownMode] = useState(() => {
-    const savedMode = localStorage.getItem("countdownMode");
-    return savedMode || "single";
-  });
-
-
+  // Reference to the display area for click handling
   const displayRef = useRef(null);
 
-
+  // Save color settings to localStorage
   useEffect(() => {
     localStorage.setItem('countdownFontColor', fontColor);
   }, [fontColor]);
@@ -55,7 +57,7 @@ function App() {
     localStorage.setItem('countdownBackgroundColor', backgroundColor);
   }, [backgroundColor]);
 
-
+  // Save state to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem("countdownSets", JSON.stringify(countdownSets));
   }, [countdownSets]);
@@ -68,24 +70,20 @@ function App() {
     localStorage.setItem("isCountingDown", JSON.stringify(isCountingDown));
   }, [isCountingDown]);
 
-  useEffect(() => {
-    localStorage.setItem("countdownMode", countdownMode);
-  }, [countdownMode]);
-
-
+  // Show control indicator periodically if controls are hidden
   useEffect(() => {
     if (!showControls && !isCountingDown) {
-
+      // Show the indicator every 30 seconds for 5 seconds
       const indicatorInterval = setInterval(() => {
         setShowControlIndicator(true);
 
-
+        // Hide it after 5 seconds
         setTimeout(() => {
           setShowControlIndicator(false);
         }, 5000);
       }, 30000);
 
-
+      // Also show it initially for new users
       if (countdownSets.length === 0) {
         setShowControlIndicator(true);
         setTimeout(() => {
@@ -101,7 +99,7 @@ function App() {
     }
   }, [showControls, isCountingDown, countdownSets.length]);
 
-
+  // Check if current set has reached zero to show the next set hint
   useEffect(() => {
     if (
       countdownSets.length > 0 &&
@@ -109,17 +107,18 @@ function App() {
       countdownSets[currentSetIndex].currentValue === 0 &&
       isCountingDown
     ) {
-
+      // Show "Press Shift+N to go to the next set" hint
       setShowNextSetHint(true);
       setReachedZero(true);
 
+      // Automatically pause counting
       setIsCountingDown(false);
     } else if (
       countdownSets.length > 0 &&
       currentSetIndex < countdownSets.length &&
       countdownSets[currentSetIndex].currentValue > 0
     ) {
-
+      // Reset flags when value is greater than 0
       setShowNextSetHint(false);
       setReachedZero(false);
     }
@@ -158,7 +157,7 @@ function App() {
 
     setCountdownSets((prevSets) => {
       const newSets = [...prevSets];
-
+      // Only decrement if the current value is greater than zero
       if (newSets[currentSetIndex].currentValue > 0) {
         newSets[currentSetIndex] = {
           ...newSets[currentSetIndex],
@@ -169,47 +168,51 @@ function App() {
     });
   }, [countdownSets, currentSetIndex, isCountingDown]);
 
+  // Move to the next set
   const moveToNextSet = useCallback(() => {
     if (countdownSets.length <= 1) return;
 
-
+    // Calculate the next index with wraparound
     const nextIndex = (currentSetIndex + 1) % countdownSets.length;
     setCurrentSetIndex(nextIndex);
 
+    // Start the countdown for the new set
     setIsCountingDown(true);
   }, [countdownSets.length, currentSetIndex]);
 
+  // Handle keyboard events for counting
   useEffect(() => {
+    // These keys will trigger the countdown
     const countKeys = ["Enter", " ", "Space"];
 
     const handleKeyDown = (e) => {
+      // Handle Shift+N key for next set navigation when current set is at 0
       if (e.key === "N" && e.shiftKey && reachedZero) {
         e.preventDefault();
         moveToNextSet();
         return;
       }
 
+      // Handle Shift+R key for resetting current set
       if (e.key === "R" && e.shiftKey) {
         e.preventDefault();
         resetCurrentSet();
         return;
       }
 
+      // Check if it's one of our count keys
       if (countKeys.includes(e.code) || countKeys.includes(e.key)) {
-        e.preventDefault();
+        e.preventDefault(); // Prevent page scrolling on spacebar
 
+        // Only process if the key wasn't already being held down
         if (!isKeyHeld) {
           setIsKeyHeld(true);
 
           if (!isCountingDown && countdownSets.length > 0) {
             setIsCountingDown(true);
           } else if (isCountingDown) {
-            if (countdownMode === "single") {
-              decrementCurrentSet();
-            } else if (countdownMode === "hold") {
-
-              decrementCurrentSet();
-            }
+            // Single press mode - manually decrement on each press
+            decrementCurrentSet();
           }
         }
       } else if (e.key === "Escape") {
@@ -218,7 +221,7 @@ function App() {
     };
 
     const handleKeyUp = (e) => {
-
+      // Reset key held state when the key is released
       if (countKeys.includes(e.code) || countKeys.includes(e.key)) {
         setIsKeyHeld(false);
       }
@@ -236,49 +239,15 @@ function App() {
     isCountingDown,
     countdownSets.length,
     currentSetIndex,
-    countdownMode,
     isKeyHeld,
     moveToNextSet,
     reachedZero,
     resetCurrentSet
   ]);
 
-
-  useEffect(() => {
-    let intervalId;
-    let initialDelay;
-
-
-    if (
-      (isKeyHeld || isMouseHeld) &&
-      isCountingDown &&
-      countdownMode === "hold" &&
-      countdownSets.length > 0
-    ) {
-
-      initialDelay = setTimeout(() => {
-
-        intervalId = setInterval(() => {
-          decrementCurrentSet();
-        }, 100);
-      }, 500);
-    }
-
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-      if (initialDelay) clearTimeout(initialDelay);
-    };
-  }, [
-    isKeyHeld,
-    isMouseHeld,
-    isCountingDown,
-    countdownMode,
-    countdownSets.length,
-    decrementCurrentSet,
-  ]);
-
+  // Handle mouse movement to show/hide controls
   const handleMouseMove = (e) => {
-
+    // Show controls when mouse is near the right edge of the screen
     const edgeThreshold = 50;
     const { clientX } = e;
     const { innerWidth } = window;
@@ -286,36 +255,37 @@ function App() {
     if (clientX >= innerWidth - edgeThreshold) {
       setShowControls(true);
     } else if (showControls && clientX < innerWidth - 350) {
-
+      // Hide controls when mouse moves away from the panel
       setShowControls(false);
     }
   };
 
+  // Handle mouse clicks on the display
   const handleDisplayMouseDown = () => {
     if (showControls) {
+      // If controls are visible, don't trigger countdown actions
       return;
     }
 
+    // Only process if the mouse wasn't already being held down
     if (!isMouseHeld) {
       setIsMouseHeld(true);
 
       if (!isCountingDown && countdownSets.length > 0) {
         setIsCountingDown(true);
       } else if (isCountingDown) {
-        if (countdownMode === "single") {
-
-          decrementCurrentSet();
-        } else if (countdownMode === "hold") {
-          decrementCurrentSet();
-        }
+        // Single press mode - manually decrement on each click
+        decrementCurrentSet();
       }
     }
   };
 
+  // Reset mouse held state on mouse up
   const handleDisplayMouseUp = () => {
     setIsMouseHeld(false);
   };
 
+  // Change current set manually
   const changeCurrentSet = (index) => {
     setCurrentSetIndex(index);
   };
@@ -377,8 +347,6 @@ function App() {
           }}
           currentSetIndex={currentSetIndex}
           onSelectSet={changeCurrentSet}
-          countdownMode={countdownMode}
-          setCountdownMode={setCountdownMode}
           fontColor={fontColor}
           setFontColor={setFontColor}
           backgroundColor={backgroundColor}
